@@ -16,15 +16,13 @@ Interactive Visualization: Displays results through dynamic, easy-to-understand 
 User-Friendly Interface: Simple input and clean display for seamless user experience.
 
 Technologies Used
-Frontend: [React.js / Vue.js / Your frontend framework]
+Frontend: Html & CSS, javascript
 
-Backend: [Node.js / Python Flask / Django / Your backend framework]
+Backend: Python Flask
 
-Web Scraping: [Requests / BeautifulSoup / Puppeteer / Your scraping tool]
+Web Scraping: BeautifulSoup
 
-Data Visualization: [Chart.js / D3.js / Plotly.js]
-
-Other: Git for version control, and any databases or APIs you use.
+Data Visualization: Chart.js
 
 Installation
 Clone the repository:
@@ -57,3 +55,4 @@ MIT License
 
 Contact
 For questions or feedback, please contact [Rob] at [robc173322@gmail.com].
+
