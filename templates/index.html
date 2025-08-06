@@ -3,199 +3,180 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home Tracker</title>
-    <link rel="stylesheet" href="static/styles/styles.css" />
+    <title>Home Tracker - Premium Real Estate Analytics</title>
+    <link rel="stylesheet" href="/static/styles/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- External libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.1/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7/dist/chartjs-plugin-zoom.min.js"></script>
   </head>
   <body>
-    <header>
-      <h1 class="title">🏡 Home Tracker</h1>
-      <div class="zip-input-container">
-        <label for="zipCode">Enter Zip Code: </label>
-        <input
-          type="text"
-          id="zipCode"
-          name="zipCode"
-          placeholder="Type in a valid zip code"
-        />
-        <button id="enterButton">Enter</button>
-      </div>
-    </header>
-    <div class="container">
-      <div class="graph-section">
-        <h2>📈 Real Estate Market Overview</h2>
-        <canvas id="chart_bedPrice" width="800" height="400"></canvas>
-        <div class="graph-controls">
-          <button id="resetZoom">🔄 Reset Zoom</button>
-        </div>
-      </div>
-      <div class="info-section">
-        <h2>🏘️ Property Details</h2>
-        <div class="grid-container">
-          <div id="propertyPicture" class="info-box">
-            <p>Select a property from the graph to see details here.</p>
-          </div>
-          <div id="propertyInfo" class="info-box">
-            <p>Select a property from the graph to see details here.</p>
-          </div>
-        </div>
+    <!-- Animated background -->
+    <div class="bg-animation">
+      <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+        <div class="shape shape-6"></div>
       </div>
     </div>
-    <script>
-      document
-        .getElementById("enterButton")
-        .addEventListener("click", async function () {
-          const enterButton = document.getElementById("enterButton");
-          const zipCode = document.getElementById("zipCode").value;
 
-          try {
-            const response = await fetch("/get_listings", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ zipCode: zipCode }),
-            });
-            const data = await response.json();
+    <!-- Navigation -->
+    <nav class="nav-bar">
+      <div class="nav-brand">
+        <i class="fas fa-home"></i>
+        <span>HomeTracker</span>
+      </div>
+      <div class="nav-actions">
+        <button class="nav-btn">
+          <i class="fas fa-chart-line"></i>
+          Analytics
+        </button>
+      </div>
+    </nav>
 
-            if (data.message) {
-              alert(data.message);
-              await chartIt_bedPrice(zipCode); // Wait for chart to load
-            } else if (data.error) {
-              alert(data.error);
-            }
-          } catch (error) {
-            alert("There was an error with the request.");
-          }
-        });
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1 class="hero-title">
+          <span class="gradient-text">Discover</span>
+          <span class="typing-text">Your Dream Home</span>
+        </h1>
+        <p class="hero-subtitle">
+          Advanced real estate analytics powered by live market data
+        </p>
+        
+        <div class="search-container">
+          <div class="search-box">
+            <div class="input-group">
+              <i class="fas fa-map-marker-alt search-icon"></i>
+              <input
+                type="text"
+                id="zipCode"
+                name="zipCode"
+                placeholder="Enter ZIP code (e.g., 59801)"
+                autocomplete="off"
+              />
+              <button id="enterButton" class="search-btn">
+                <span class="btn-text">Analyze Market</span>
+                <i class="fas fa-search btn-icon"></i>
+              </button>
+            </div>
+            <div id="loadingSpinner" class="loading-container" style="display: none;">
+              <div class="loading-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+              </div>
+              <span class="loading-text">Analyzing market data...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Scroll indicator -->
+      <div class="scroll-indicator">
+        <div class="scroll-dot"></div>
+        <div class="scroll-line"></div>
+        <span>Scroll to explore</span>
+      </div>
+    </section>
 
-      document.addEventListener("click", function () {
-        document.getElementById("zipCode").value = "";
-        document.getElementById("propertyPicture").innerHTML =
-          "<p>Select a property from the graph to see details here.</p>";
-        document.getElementById("propertyInfo").innerHTML =
-          "<p>Select a property from the graph to see details here.</p>";
-        const chartCanvas = document.getElementById("chart_bedPrice");
-        const ctx = chartCanvas.getContext("2d");
-        ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
-      });
+    <!-- Main Dashboard -->
+    <main class="dashboard">
+      <!-- Market Overview Section -->
+      <section class="chart-section">
+        <div class="section-header">
+          <div class="header-content">
+            <h2 class="section-title">
+              <i class="fas fa-chart-area"></i>
+              Market Overview
+            </h2>
+            <p class="section-subtitle">Interactive price analysis by bedroom count</p>
+          </div>
+          <div class="chart-controls">
+            <button id="resetZoom" class="control-btn">
+              <i class="fas fa-expand-arrows-alt"></i>
+              Reset View
+            </button>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <canvas id="chart_bedPrice"></canvas>
+          <div class="chart-overlay">
+            <div class="chart-stats">
+              <div class="stat-item">
+                <span class="stat-label">Total Properties</span>
+                <span class="stat-value" id="totalProperties">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Price Range</span>
+                <span class="stat-value" id="priceRange">$0 - $0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      const beds = [];
-      const baths = [];
-      const price = [];
-      const hasImage = [];
-      const imgSrc = [];
-      const detailUrl = [];
-      const address = [];
-      const area = [];
+      <!-- Property Details Section -->
+      <section class="details-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="fas fa-home"></i>
+            Property Details
+          </h2>
+          <p class="section-subtitle">Click on any data point to view property information</p>
+        </div>
+        
+        <div class="details-grid">
+          <div class="detail-card" id="propertyPicture">
+            <div class="card-placeholder">
+              <i class="fas fa-image placeholder-icon"></i>
+              <h3>Property Image</h3>
+              <p>Select a property from the chart to view its image</p>
+            </div>
+          </div>
+          
+          <div class="detail-card" id="propertyInfo">
+            <div class="card-placeholder">
+              <i class="fas fa-info-circle placeholder-icon"></i>
+              <h3>Property Information</h3>
+              <p>Select a property from the chart to view detailed information</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
 
-      async function getData(zipCode) {
-        const response = await fetch(`/static/${zipCode}.csv`);
-        // console.log(zipCode)
-        const text = await response.text();
-        Papa.parse(text, {
-          header: true,
-          skipEmptyLines: true,
-          complete: (results) => {
-            results.data.forEach((row) => {
-              beds.push(parseFloat(row.beds) || 0);
-              baths.push(parseFloat(row.baths) || 0);
-              price.push(parseFloat(row.unformattedPrice) || 0);
-              hasImage.push(row.hasImage || "");
-              imgSrc.push(row.imgSrc || "");
-              detailUrl.push(row.detailUrl || "");
-              address.push(row.address || "");
-              area.push(parseFloat(row.area) || 0);
-            });
-          },
-        });
-      }
-      async function deleteFile(zipCode) {
-        const fs = require("fs");
-        filePath = `/static/${zipCode}.csv`;
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.error(`Error deleting file: ${err}`);
-            return;
-          }
-          console.log(`File ${filePath} deleted successfully.`);
-        });
-      }
-      async function chartIt_bedPrice(zipCode) {
-        await getData(zipCode);
-        const ctx = document.getElementById("chart_bedPrice");
-        const myChart = new Chart(ctx, {
-          type: "scatter",
-          data: {
-            labels: beds,
-            datasets: [
-              {
-                label: "House Price to Beds",
-                data: price.map((y, index) => ({ x: beds[index], y })),
-                borderColor: "#4CAF50",
-                backgroundColor: "#81C784",
-                borderWidth: 2,
-                pointRadius: 6,
-                hoverRadius: 8,
-                fill: false,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              yAxes: [{ ticks: { beginAtZero: true } }],
-              xAxes: [{ ticks: { beginAtZero: true } }],
-            },
-            plugins: {
-              zoom: {
-                zoom: {
-                  enabled: true,
-                  mode: "xy",
-                  speed: 0.05,
-                },
-              },
-            },
-            onClick: (e) => {
-              const points = myChart.getElementsAtEvent(e);
-              if (points.length > 0) {
-                const pointIndex = points[0]._index;
-                document.getElementById("propertyInfo").innerHTML = `
-                    <h3>Property Info</h3>
-                      <p><strong>Detail URL:</strong> <a href="${
-                        detailUrl[pointIndex]
-                      }" target="_blank">View Listing</a></p>
-                      <p><strong>Beds:</strong> ${beds[pointIndex]}</p>
-                      <p><strong>Baths:</strong> ${baths[pointIndex]}</p>
-                      <p><strong>Area:</strong> ${area[pointIndex]} sq ft</p>
-                      <p><strong>Price:</strong> $${price[
-                        pointIndex
-                      ].toLocaleString()}</p>
-                      <p><strong>Address:</strong> ${address[pointIndex]}</p>
-                    `;
+    <!-- Success Toast -->
+    <div id="successToast" class="toast toast-success">
+      <i class="fas fa-check-circle"></i>
+      <div class="toast-content">
+        <span class="toast-title">Success!</span>
+        <span class="toast-message" id="toastMessage"></span>
+      </div>
+      <button class="toast-close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
 
-                if (imgSrc[pointIndex] == "False") {
-                  document.getElementById("propertyPicture").innerHTML = `
-                        <p><strong>Sorry. Images aren't available</strong></p>
-                      `;
-                } else {
-                  document.getElementById("propertyPicture").innerHTML = `
-                        <h3>Property Image</h3>
-                        <img src="${imgSrc[pointIndex]}" alt="Property Image"
-                          style="width: 80%; height: auto; max-width: 400px; border-radius: 10px;
-                          box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: block; margin: 0 auto;">
-                      `;
-                }
-              }
-            },
-          },
-        });
-        // deleteFile(zipCode);
-        document
-          .getElementById("resetZoom")
-          .addEventListener("click", () => myChart.resetZoom());
-      }
-    </script>
+    <!-- Error Toast -->
+    <div id="errorToast" class="toast toast-error">
+      <i class="fas fa-exclamation-circle"></i>
+      <div class="toast-content">
+        <span class="toast-title">Error!</span>
+        <span class="toast-message" id="errorToastMessage"></span>
+      </div>
+      <button class="toast-close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Load our custom JavaScript -->
+    <script src="/static/js/app.js"></script>
   </body>
 </html>
